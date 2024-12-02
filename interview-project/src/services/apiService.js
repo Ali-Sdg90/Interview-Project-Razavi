@@ -3,8 +3,10 @@ import { API_BASE_URL } from "../constants/apiConstants";
 
 // Display error messages as toast notifications with delay
 const displayErrorMessages = (messages, setToastifyObj) => {
-    if (Array.isArray(messages)) {
-        messages.forEach((message, index) => {
+    console.log("in here", messages);
+
+    if (Array.isArray(messages.Id)) {
+        messages.Id.forEach((message, index) => {
             setTimeout(() => {
                 setToastifyObj({
                     title: message,
@@ -25,8 +27,8 @@ const handleError = (error, setToastifyObj) => {
     let errorMessage = "An unknown error occurred";
 
     if (error.response) {
-        console.error("Error response:", error.response.data);
-        errorMessage = error.response.data.message || errorMessage;
+        console.error("Error response:", error.response.data.errors);
+        errorMessage = error.response.data.errors || errorMessage;
     } else if (error.request) {
         console.error("Error request:", error.request);
         errorMessage = "No response received from server";
