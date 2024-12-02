@@ -1,17 +1,5 @@
 import axios from "axios";
 import { API_BASE_URL } from "../constants/apiConstants";
-import { LOCAL_STORAGE_TOKEN } from "../constants/commonConstants";
-
-// Retrieve token from local storage
-const getLocalToken = () => {
-    try {
-        const token = window.localStorage.getItem(LOCAL_STORAGE_TOKEN);
-        return token ? JSON.parse(token) : null;
-    } catch (error) {
-        console.error("Failed to retrieve token from local storage:", error);
-        return null;
-    }
-};
 
 // Display error messages as toast notifications with delay
 const displayErrorMessages = (messages, setToastifyObj) => {
@@ -59,14 +47,6 @@ const createHeaders = (needToken) => {
     const headers = {
         "Content-Type": "application/json",
     };
-
-    if (needToken) {
-        const localToken = getLocalToken();
-
-        if (localToken) {
-            headers["Authorization"] = `Bearer ${localToken}`;
-        }
-    }
 
     // console.log("HEADER >>", needToken, ">>", headers);
 
