@@ -1,10 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Tree } from "antd";
-import { getRequest } from "../services/apiService";
+import { Button, Col, ConfigProvider, Form, Input, Row, Tree } from "antd";
+import {
+    deleteRequest,
+    getRequest,
+    postRequest,
+    putRequest,
+} from "../services/apiService";
 import { CommonContext } from "../store/CommonContextProvider";
 
 const TestPage = () => {
     const [mainItems, setMainItems] = useState([]);
+    const [selectedItemId, setSelectedItemId] = useState();
 
     const { setToastifyObj } = useContext(CommonContext);
 
@@ -29,7 +35,7 @@ const TestPage = () => {
         const getData = async () => {
             try {
                 const res = await getRequest(
-                    `/GetRootWithChildren`,
+                    `/Department/GetRootWithChildren`,
                     false,
                     setToastifyObj
                 );
@@ -74,7 +80,7 @@ const TestPage = () => {
         }
         try {
             const res = await getRequest(
-                `/GetChildrenByParentId?id=${treeNode.key}`,
+                `/Department/GetChildrenByParentId?id=${treeNode.key}`,
                 false,
                 setToastifyObj
             );
@@ -95,15 +101,149 @@ const TestPage = () => {
         }
     };
 
+    const modifyItems = async (mode, values) => {
+        console.log("values >>", values);
+
+        debugger;
+
+        try {
+            let res;
+
+            switch (mode) {
+                case "PUT":
+                    res = await putRequest(
+                        `/Department`,
+                        {
+                            Id: selectedItemId,
+                            Title: values.editValue,
+                        },
+                        false,
+                        setToastifyObj
+                    );
+                    break;
+                case "POST":
+                    res = await postRequest(
+                        `/Department`,
+                        {
+                            Title: values.newValue,
+                            ParentId: selectedItemId,
+                        },
+                        false,
+                        setToastifyObj
+                    );
+                    break;
+                case "DELETE":
+                    res = await deleteRequest(
+                        `/Department?id=${selectedItemId}`,
+                        false,
+                        setToastifyObj
+                    );
+                    break;
+                default:
+                    break;
+            }
+
+            console.log("RES >>", res);
+
+            if (res.IsSuccess) {
+                const transformedData = transformDataToTree(res.Data);
+                setMainItems(transformedData);
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            console.log("Error in PUT >>", error.message);
+        }
+    };
+
+    const onSelect = (selectedKeys, { selected, node }) => {
+        if (selected) {
+            console.log("Selected Node:", node);
+
+            setSelectedItemId(node.key);
+        } else {
+            console.log("Deselected Node");
+            setSelectedItemId("");
+        }
+    };
+
     return (
-        <Tree
-            checkable
-            defaultExpandAll
-            treeData={mainItems}
-            onCheck={onCheck}
-            showLine
-            loadData={onLoadData}
-        />
+        <Row>
+            <Col span={12}>
+                <Tree
+                    checkable
+                    defaultExpandAll
+                    treeData={mainItems}
+                    onCheck={onCheck}
+                    showLine
+                    loadData={onLoadData}
+                    onSelect={onSelect}
+                />
+            </Col>
+
+            <Col span={12}>
+                {selectedItemId ? (
+                    <>
+                        <h3>Selected Item Id: {selectedItemId}</h3>
+
+                        <Form
+                            className="form-with-border"
+                            onFinish={(values) => modifyItems("PUT", values)}
+                            layout="vertical"
+                            initialValues={{
+                                editValue: "hi",
+                            }}
+                        >
+                            <Form.Item
+                                label="Edit Current Item"
+                                name="editValue"
+                            >
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    Submit
+                                </Button>
+                            </Form.Item>
+                        </Form>
+
+                        <Form
+                            className="form-with-border"
+                            onFinish={(values) => modifyItems("POST", values)}
+                            layout="vertical"
+                            initialValues={{
+                                newValue: "hi",
+                            }}
+                        >
+                            <Form.Item label="Add New Child" name="newValue">
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    Submit
+                                </Button>
+                            </Form.Item>
+                        </Form>
+
+                        <Form
+                            className="form-with-border"
+                            onFinish={(values) => modifyItems("DELETE", values)}
+                            layout="vertical"
+                        >
+                            <Form.Item label="Delete Item">
+                                <Button type="primary" htmlType="submit">
+                                    Submit
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </>
+                ) : (
+                    <h3>Please select an Item to show its actions</h3>
+                )}
+            </Col>
+        </Row>
     );
 };
 

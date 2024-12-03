@@ -1,0 +1,17 @@
+.form-with-border {
+    border: 1px solid rgb(109, 109, 109);
+    direction: ltr;
+    padding: 10px 15px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 3px 3px rgba(109, 109, 109, 0.2);
+
+    input {
+        direction: ltr;
+    }
+}
+
+h3 {
+    direction: ltr;
+    padding: 14px 15px 4px;
+}

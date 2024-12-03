@@ -132,3 +132,23 @@ export const deleteRequest = async (
         return handleError(error, setToastifyObj);
     }
 };
+
+// PUT request
+export const putRequest = async (
+    endpoint,
+    data,
+    needToken = true,
+    setToastifyObj
+) => {
+    console.log("PUT request >>", endpoint);
+
+    try {
+        const res = await axios.put(`${API_BASE_URL}${endpoint}`, data, {
+            headers: createHeaders(needToken),
+        });
+
+        return res.data;
+    } catch (error) {
+        return handleError(error, setToastifyObj);
+    }
+};
