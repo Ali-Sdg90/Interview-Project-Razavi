@@ -7,7 +7,7 @@ import {
 } from "../../services/apiService";
 import { CommonContext } from "../../store/CommonContextProvider";
 
-const ItemActionSection = ({ selectedItemId, setGetFreshData }) => {
+const ItemActionSection = ({ selectedItemNode, setGetFreshData }) => {
     const { setToastifyObj } = useContext(CommonContext);
 
     const modifyItems = async (mode, values) => {
@@ -19,7 +19,7 @@ const ItemActionSection = ({ selectedItemId, setGetFreshData }) => {
                     res = await putRequest(
                         `/Department`,
                         {
-                            Id: selectedItemId,
+                            Id: selectedItemNode.key,
                             Title: values.editValue,
                         },
                         false,
@@ -31,7 +31,7 @@ const ItemActionSection = ({ selectedItemId, setGetFreshData }) => {
                         `/Department`,
                         {
                             Title: values.newValue,
-                            ParentId: selectedItemId,
+                            ParentId: selectedItemNode.key,
                         },
                         false,
                         setToastifyObj
@@ -39,7 +39,7 @@ const ItemActionSection = ({ selectedItemId, setGetFreshData }) => {
                     break;
                 case "DELETE":
                     res = await deleteRequest(
-                        `/Department?id=${selectedItemId}`,
+                        `/Department?id=${selectedItemNode.key}`,
                         false,
                         setToastifyObj
                     );
@@ -67,18 +67,28 @@ const ItemActionSection = ({ selectedItemId, setGetFreshData }) => {
 
     return (
         <>
-            <h3>Selected Item Id: {selectedItemId}</h3>
+            <h3>Selected Item Title: {selectedItemNode.title}</h3>
 
             <Form
                 className="form-with-border"
                 onFinish={(values) => modifyItems("PUT", values)}
                 layout="vertical"
                 initialValues={{
-                    editValue: "hi",
+                    editValue: "",
                 }}
             >
-                <Form.Item label="Edit Selected Item Name" name="editValue">
-                    <Input />
+                <Form.Item
+                    label="Edit Selected Item Name"
+                    name="editValue"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please enter a valid name",
+                        },
+                    ]}
+                    required={false}
+                >
+                    <Input placeholder="New Item's Name" />
                 </Form.Item>
 
                 <Form.Item>
@@ -93,14 +103,21 @@ const ItemActionSection = ({ selectedItemId, setGetFreshData }) => {
                 onFinish={(values) => modifyItems("POST", values)}
                 layout="vertical"
                 initialValues={{
-                    newValue: "hi",
+                    newValue: "",
                 }}
             >
                 <Form.Item
                     label="Add New Child to Selected Item"
                     name="newValue"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please enter a valid name",
+                        },
+                    ]}
+                    required={false}
                 >
-                    <Input />
+                    <Input placeholder="New Child's Name" />
                 </Form.Item>
 
                 <Form.Item>

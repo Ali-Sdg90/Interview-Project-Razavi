@@ -8,7 +8,7 @@ import ItemActionSection from "../components/TestPage/ItemActionSection";
 
 const TestPage = () => {
     const [mainItems, setMainItems] = useState([]);
-    const [selectedItemId, setSelectedItemId] = useState();
+    const [selectedItemNode, setSelectedItemNode] = useState();
     const [getFreshData, setGetFreshData] = useState(true);
 
     const { setToastifyObj } = useContext(CommonContext);
@@ -75,9 +75,6 @@ const TestPage = () => {
     const onLoadData = async (treeNode) => {
         console.log(treeNode.key);
 
-        if (treeNode.retry) {
-            console.log("Noe");
-        }
         try {
             const res = await getRequest(
                 `/Department/GetChildrenByParentId?id=${treeNode.key}`,
@@ -102,10 +99,11 @@ const TestPage = () => {
     };
 
     const onSelect = (selectedKeys, { selected, node }) => {
+        console.log(node);
         if (selected) {
-            setSelectedItemId(node.key);
+            setSelectedItemNode(node);
         } else {
-            setSelectedItemId("");
+            setSelectedItemNode("");
         }
     };
 
@@ -124,9 +122,9 @@ const TestPage = () => {
             </Col>
 
             <Col span={12}>
-                {selectedItemId ? (
+                {selectedItemNode ? (
                     <ItemActionSection
-                        selectedItemId={selectedItemId}
+                        selectedItemNode={selectedItemNode}
                         setGetFreshData={setGetFreshData}
                     />
                 ) : (
