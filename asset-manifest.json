@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/Interview-Project-Razavi/static/css/main.e7e6d792.css",
+    "main.js": "/Interview-Project-Razavi/static/js/main.2d56d8db.js",
+    "static/media/IRANYekanFN-Thin.ttf": "/Interview-Project-Razavi/static/media/IRANYekanFN-Thin.8848d9cd79e7afcc6afe.ttf",
+    "static/media/IRANYekanFN-Light.ttf": "/Interview-Project-Razavi/static/media/IRANYekanFN-Light.69e0283b3565ef71d7c7.ttf",
+    "static/media/IRANYekanFN.ttf": "/Interview-Project-Razavi/static/media/IRANYekanFN.c60f52a9c7ded0f426e5.ttf",
+    "static/media/IRANYekanFN-Medium.ttf": "/Interview-Project-Razavi/static/media/IRANYekanFN-Medium.007b49e993db13942de5.ttf",
+    "static/media/IRANYekanFN-ExtraBold.ttf": "/Interview-Project-Razavi/static/media/IRANYekanFN-ExtraBold.163c5c7ff5721eefa766.ttf",
+    "static/media/IRANYekanFN-Bold.ttf": "/Interview-Project-Razavi/static/media/IRANYekanFN-Bold.2e024cad6c04465db87c.ttf",
+    "static/media/IRANYekanFN-Black.ttf": "/Interview-Project-Razavi/static/media/IRANYekanFN-Black.fbfa0aeb0b19e3f92114.ttf",
+    "index.html": "/Interview-Project-Razavi/index.html",
+    "main.e7e6d792.css.map": "/Interview-Project-Razavi/static/css/main.e7e6d792.css.map",
+    "main.2d56d8db.js.map": "/Interview-Project-Razavi/static/js/main.2d56d8db.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e7e6d792.css",
+    "static/js/main.2d56d8db.js"
+  ]
+}
