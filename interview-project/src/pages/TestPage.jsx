@@ -1,22 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Col, ConfigProvider, Form, Input, Row, Tree } from "antd";
-import {
-    deleteRequest,
-    getRequest,
-    postRequest,
-    putRequest,
-} from "../services/apiService";
+import { Col, Row, Tree } from "antd";
+
+import { getRequest } from "../services/apiService";
 import { CommonContext } from "../store/CommonContextProvider";
+
+import ItemActionSection from "../components/TestPage/ItemActionSection";
 
 const TestPage = () => {
     const [mainItems, setMainItems] = useState([]);
     const [selectedItemId, setSelectedItemId] = useState();
+    const [getFreshData, setGetFreshData] = useState(true);
 
     const { setToastifyObj } = useContext(CommonContext);
-
-    const onCheck = (checkedKeys) => {
-        console.log("Checked Keys:", checkedKeys);
-    };
 
     const transformDataToTree = (data) => {
         const dataArray = Array.isArray(data) ? data : [data];
@@ -32,7 +27,7 @@ const TestPage = () => {
     };
 
     useEffect(() => {
-        const getData = async () => {
+        const getRootData = async () => {
             try {
                 const res = await getRequest(
                     `/Department/GetRootWithChildren`,
@@ -53,8 +48,13 @@ const TestPage = () => {
             }
         };
 
-        getData();
-    }, []);
+        if (getFreshData) {
+            console.log(getFreshData);
+
+            setGetFreshData(false);
+            getRootData();
+        }
+    }, [getFreshData]);
 
     const updateTreeData = (list, key, children) =>
         list.map((node) => {
@@ -101,68 +101,10 @@ const TestPage = () => {
         }
     };
 
-    const modifyItems = async (mode, values) => {
-        console.log("values >>", values);
-
-        debugger;
-
-        try {
-            let res;
-
-            switch (mode) {
-                case "PUT":
-                    res = await putRequest(
-                        `/Department`,
-                        {
-                            Id: selectedItemId,
-                            Title: values.editValue,
-                        },
-                        false,
-                        setToastifyObj
-                    );
-                    break;
-                case "POST":
-                    res = await postRequest(
-                        `/Department`,
-                        {
-                            Title: values.newValue,
-                            ParentId: selectedItemId,
-                        },
-                        false,
-                        setToastifyObj
-                    );
-                    break;
-                case "DELETE":
-                    res = await deleteRequest(
-                        `/Department?id=${selectedItemId}`,
-                        false,
-                        setToastifyObj
-                    );
-                    break;
-                default:
-                    break;
-            }
-
-            console.log("RES >>", res);
-
-            if (res.IsSuccess) {
-                const transformedData = transformDataToTree(res.Data);
-                setMainItems(transformedData);
-            } else {
-                throw new Error();
-            }
-        } catch (error) {
-            console.log("Error in PUT >>", error.message);
-        }
-    };
-
     const onSelect = (selectedKeys, { selected, node }) => {
         if (selected) {
-            console.log("Selected Node:", node);
-
             setSelectedItemId(node.key);
         } else {
-            console.log("Deselected Node");
             setSelectedItemId("");
         }
     };
@@ -171,10 +113,10 @@ const TestPage = () => {
         <Row>
             <Col span={12}>
                 <Tree
+                    className="tree-section"
                     checkable
                     defaultExpandAll
                     treeData={mainItems}
-                    onCheck={onCheck}
                     showLine
                     loadData={onLoadData}
                     onSelect={onSelect}
@@ -183,62 +125,10 @@ const TestPage = () => {
 
             <Col span={12}>
                 {selectedItemId ? (
-                    <>
-                        <h3>Selected Item Id: {selectedItemId}</h3>
-
-                        <Form
-                            className="form-with-border"
-                            onFinish={(values) => modifyItems("PUT", values)}
-                            layout="vertical"
-                            initialValues={{
-                                editValue: "hi",
-                            }}
-                        >
-                            <Form.Item
-                                label="Edit Current Item"
-                                name="editValue"
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Submit
-                                </Button>
-                            </Form.Item>
-                        </Form>
-
-                        <Form
-                            className="form-with-border"
-                            onFinish={(values) => modifyItems("POST", values)}
-                            layout="vertical"
-                            initialValues={{
-                                newValue: "hi",
-                            }}
-                        >
-                            <Form.Item label="Add New Child" name="newValue">
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Submit
-                                </Button>
-                            </Form.Item>
-                        </Form>
-
-                        <Form
-                            className="form-with-border"
-                            onFinish={(values) => modifyItems("DELETE", values)}
-                            layout="vertical"
-                        >
-                            <Form.Item label="Delete Item">
-                                <Button type="primary" htmlType="submit">
-                                    Submit
-                                </Button>
-                            </Form.Item>
-                        </Form>
-                    </>
+                    <ItemActionSection
+                        selectedItemId={selectedItemId}
+                        setGetFreshData={setGetFreshData}
+                    />
                 ) : (
                     <h3>Please select an Item to show its actions</h3>
                 )}
